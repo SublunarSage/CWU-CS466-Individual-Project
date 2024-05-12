@@ -1,2 +1,2 @@
-# CWU-CS466-Personal-Project
+# CWU-CS466-Individual-Project
 Individual Project for CS466 (Virtual Reality) class
