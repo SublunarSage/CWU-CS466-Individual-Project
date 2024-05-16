@@ -13,10 +13,10 @@ TagManager:
   - UI
   - Interactive
   - 
-  - 
-  - 
-  - 
-  - 
+  - BallOnBoard
+  - BallInHole
+  - Hole
+  - Obstacle
   - 
   - 
   - 

@@ -17,6 +17,7 @@ namespace VRPuzzleBall.Scripts.Runtime
         [SerializeField] private double maxTiltAngle = 5.0;
         [SerializeField] private double rotationSpeed = 0.15;
         [SerializeField] private InputActionAsset inputActions;
+        [SerializeField] private float gyroSensitivity;
 
         private InputAction mobileGyro;
         private InputAction mobileAttitude;
@@ -65,11 +66,11 @@ namespace VRPuzzleBall.Scripts.Runtime
                 InputSystem.EnableDevice(AttitudeSensor.current); // Getting Attitude Sensor only works by constantly enabling the device in the update...Why?
                 InputSystem.EnableDevice(Gyroscope.current);
 
-                Quaternion landscapeCorrection = Quaternion.Euler(0, 0, -90);
+                Quaternion landscapeCorrection = Quaternion.Euler(0, 0, 0);
                 Vector3 correctedInput = landscapeCorrection * mobileGyro.ReadValue<Vector3>();
 
-                if (!Gyroscope.current.remote) puzzleBoardTransform.Rotate(mobileGyro.ReadValue<Vector3>());
-                else puzzleBoardTransform.Rotate(correctedInput);
+                if (Gyroscope.current.remote) puzzleBoardTransform.Rotate(correctedInput* gyroSensitivity);
+                else puzzleBoardTransform.Rotate(mobileGyro.ReadValue<Vector3>()* gyroSensitivity);
                 
             }
             else
