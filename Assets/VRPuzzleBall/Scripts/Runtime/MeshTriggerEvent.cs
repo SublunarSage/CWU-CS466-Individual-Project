@@ -2,14 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeshTriggerEvent
+public enum MeshMessage
 {
-    public GameObject TriggeredBy { get; }
-    public int Points { get;  }
+    None,
+    PlayerCollision
+}
 
-    public MeshTriggerEvent(GameObject triggeredBy, int points)
+public class MeshTriggerEvent<T>
+{
+    public MeshMessage MeshMessage { get; }
+    public T EventData { get;  }
+
+    public MeshTriggerEvent(MeshMessage meshMessage, T eventData)
     {
-        TriggeredBy = triggeredBy;
-        Points = points;
+        MeshMessage = meshMessage;
+        EventData = eventData;
     }
 }

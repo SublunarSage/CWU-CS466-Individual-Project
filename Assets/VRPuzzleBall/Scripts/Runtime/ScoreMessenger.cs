@@ -7,14 +7,16 @@ public class ScoreMessenger : MonoBehaviour
 {
 
     public int PointsToGrant = 0;
-    public static event Action<MeshTriggerEvent> OnMeshTriggered;
+    public static event Action<MeshTriggerEvent<object>> OnMeshTriggered;
     
     
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            OnMeshTriggered?.Invoke(new MeshTriggerEvent(other.gameObject, PointsToGrant));
+            object eventData = new { Points = PointsToGrant };
+            
+            OnMeshTriggered?.Invoke(new MeshTriggerEvent<object>(MeshMessage.PlayerCollision, eventData));
         }
     }
 }

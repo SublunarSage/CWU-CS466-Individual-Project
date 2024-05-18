@@ -2,5 +2,6 @@
 public enum PlayerMessage
 {
     None,
-    Respawn
+    Respawn,
+    Deactivate
 }

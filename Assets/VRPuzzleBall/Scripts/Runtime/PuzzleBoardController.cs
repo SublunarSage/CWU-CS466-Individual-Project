@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 using Google.XR.Cardboard;
+using UnityEngine.EventSystems;
 
 
 namespace VRPuzzleBall.Scripts.Runtime
@@ -13,14 +14,16 @@ namespace VRPuzzleBall.Scripts.Runtime
     public class PuzzleBoardController : MonoBehaviour
     {
 
+        public static event Action<GameStateEvent> OnGameStateEventSent;
+
         [SerializeField] private Transform puzzleBoardTransform;
-        [SerializeField] private double maxTiltAngle = 5.0;
         [SerializeField] private double rotationSpeed = 0.15;
         [SerializeField] private InputActionAsset inputActions;
         [SerializeField] private float gyroSensitivity;
 
         private InputAction mobileGyro;
         private InputAction mobileAttitude;
+        private InputAction touchPosition;
         
         private Quaternion initialRotation;
         private Quaternion gyroRotation;
@@ -34,6 +37,8 @@ namespace VRPuzzleBall.Scripts.Runtime
             inputActions.FindActionMap("Gameplay").FindAction("TouchScreenTap").performed += OnTouchscreenTapped;
             inputActions.FindActionMap("Gameplay").FindAction("TouchScreenTap").canceled += OnTouchscreenTapped;
             mobileAttitude = inputActions.FindActionMap("Gameplay").FindAction("Att", true);
+            touchPosition = inputActions.FindActionMap("Gameplay").FindAction("TouchPosition");
+
 
         }
 
@@ -83,15 +88,48 @@ namespace VRPuzzleBall.Scripts.Runtime
 
         private void OnTouchscreenTapped(InputAction.CallbackContext context)
         {
+
+            Vector2 touchPositionValue = touchPosition.ReadValue<Vector2>();
+            
             if (context.performed)
             {
                 _isTouching = true;
-                Debug.Log("Tap");
+                
+                // Check if the touch position is over a 3D/World-Space Button
+                Ray ray = Camera.main.ScreenPointToRay(touchPositionValue);
+                RaycastHit hit;
+                
+                Debug.Log(touchPosition.ReadValue<Vector2>());
+                if (Physics.Raycast(ray, out hit))
+                {
+                    
+                }
+                
+                // Check if the touch position is over a UI element
+                PointerEventData pointerData = new PointerEventData(EventSystem.current)
+                {
+                    position = touchPositionValue
+                };
+                List<RaycastResult> results = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerData, results);
+
+                foreach (var result in results)
+                {
+                    if (result.gameObject.name == "TryAgainButton")
+                    {
+                        OnGameStateEventSent?.Invoke(GameStateEvent.Restart);
+                    }
+                    else if (result.gameObject.name == "QuitButton")
+                    {
+                        OnGameStateEventSent?.Invoke(GameStateEvent.Quit);
+                    }
+                }
+
+
             }
             else if (context.canceled)
             {
                 _isTouching = false;
-                Debug.Log("Untap");
             }
         }
 

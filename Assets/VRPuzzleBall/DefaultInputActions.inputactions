@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "TouchPosition",
+                    "type": "Value",
+                    "id": "4bd5c1a2-cc1d-42f6-90aa-1748874d37b4",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "TouchScreenTap",
                     "type": "Button",
                     "id": "29c728b9-53f6-4cc1-857f-93a1a01c3294",
@@ -177,23 +186,23 @@
                 },
                 {
                     "name": "",
-                    "id": "6b0c3b4e-372c-49da-bd9e-64642f4bf858",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "TouchScreenTap",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "d3249c20-12d2-43e8-a411-b706040bcd7d",
                     "path": "<Gyroscope>/angularVelocity",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Gyro",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "50e14531-eb59-4623-91d5-b9f7d55b741e",
+                    "path": "<Touchscreen>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TouchPosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

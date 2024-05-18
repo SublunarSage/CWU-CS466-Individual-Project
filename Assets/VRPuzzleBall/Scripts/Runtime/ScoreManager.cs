@@ -3,14 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Object = System.Object;
 
 public class ScoreManager : MonoBehaviour
 {
     public static event Action<PlayerMessage, object> OnPlayerMessageSent;
 
-    [SerializeField] private int maxLives = 5;
+    [SerializeField] private int maxLives = 1;
 
     private int _currentLives;
     private int _totalScore;
@@ -37,6 +39,10 @@ public class ScoreManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI livesText;
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private TextMeshProUGUI scoreTableText;
+    private List<int> lifeScores = new List<int>();
+    
     
     private void OnEnable()
     {
@@ -51,7 +57,13 @@ public class ScoreManager : MonoBehaviour
     private void Start()
     {
         CurrentLives = maxLives;
+        _totalScore = 0;
+        lifeScores.Clear();
+        UpdateLivesText();
+        UpdateScoreText();
+        OnPlayerMessageSent?.Invoke(PlayerMessage.Respawn,null);
     }
+    
 
     private void UpdateScoreText()
     {
@@ -63,17 +75,47 @@ public class ScoreManager : MonoBehaviour
         livesText.text = $"LIVES: {CurrentLives}";
     }
 
-    private void HandleMeshTriggered(MeshTriggerEvent triggerEvent)
+    private void HandleMeshTriggered(MeshTriggerEvent<object> triggerEvent)
     {
-        //Debug.Log("Mesh triggered by: " + triggerEvent.TriggeredBy.name);
-        //Debug.Log("Points to grant: " + triggerEvent.Points);
-        TotalScore += triggerEvent.Points;
+        if (triggerEvent.MeshMessage == MeshMessage.PlayerCollision) HandlePlayerCollision(triggerEvent);
+        
+    }
 
+    private void HandlePlayerCollision(MeshTriggerEvent<object> playerTriggerEvent)
+    {
+        var eventData = playerTriggerEvent.EventData;
+        int points = (int)eventData.GetType().GetProperty("Points")?.GetValue(eventData);
+        lifeScores.Add(points);
+        TotalScore += points;
+        
         if (CurrentLives > 0)
         {
             OnPlayerMessageSent?.Invoke(PlayerMessage.Respawn, null);
+            
             CurrentLives--;
         }
-        
+        else
+        {
+            OnPlayerMessageSent?.Invoke(PlayerMessage.Deactivate,null);
+            GameOver();
+        }
+    }
+    
+    private void GameOver()
+    {
+        gameOverPanel.SetActive(true);
+        UpdateScoreTableText();
+    }
+
+    private void UpdateScoreTableText()
+    {
+        string scoreTableString = "";
+        for (int i = 0; i < lifeScores.Count; i++)
+        {
+            scoreTableString += "Life " + (i + 1) + ": " + lifeScores[i] + "\n";
+        }
+
+        scoreTableString += "Total Score: " + _totalScore;
+        scoreTableText.text = scoreTableString;
     }
 }

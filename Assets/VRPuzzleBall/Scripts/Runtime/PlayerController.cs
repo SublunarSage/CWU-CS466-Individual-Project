@@ -40,12 +40,22 @@ public class PlayerController : MonoBehaviour
     private void HandlePlayerMessage(PlayerMessage message, object data)
     {
         if (message == PlayerMessage.Respawn) Respawn();
+        if (message == PlayerMessage.Deactivate) gameObject.SetActive(false);
     }
 
     private void Respawn()
     {
-        _marbleTransform.position = spawnPoint.transform.position;
-        _marbleTransform.rotation = spawnPoint.transform.rotation;
+        if (spawnPoint != null)
+        {
+            _marbleTransform.position = spawnPoint.transform.position;
+            _marbleTransform.rotation = spawnPoint.transform.rotation;
+        }
+        else
+        {
+            _marbleTransform.position = Vector3.zero;
+            _marbleTransform.rotation = new Quaternion(0,0,0,0);
+        }
+        
         _marbleRigidbody.velocity = Vector3.zero;
         _marbleRigidbody.angularVelocity = Vector3.zero;
     }

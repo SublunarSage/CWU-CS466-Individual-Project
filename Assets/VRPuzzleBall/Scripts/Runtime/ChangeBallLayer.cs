@@ -14,7 +14,6 @@ public class ChangeBallLayer : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             other.gameObject.layer = LayerOnEnter;
-            Debug.Log("Bing");
         }
     }
 
@@ -23,7 +22,6 @@ public class ChangeBallLayer : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             other.gameObject.layer = LayerOnExit;
-            Debug.Log("Bong");
         }
     }
 }
