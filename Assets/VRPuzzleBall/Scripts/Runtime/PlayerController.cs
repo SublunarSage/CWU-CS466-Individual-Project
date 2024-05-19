@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
         ScoreManager.OnPlayerMessageSent -= HandlePlayerMessage;
     }
 
-    private void Start()
+    private void Awake()
     {
         _marbleTransform = GetComponent<Transform>();
         _marbleRigidbody = GetComponent<Rigidbody>();
@@ -45,7 +45,14 @@ public class PlayerController : MonoBehaviour
 
     private void Respawn()
     {
-        if (spawnPoint != null)
+        // Get components again if they're null
+        /*if (_marbleTransform == null || _marbleRigidbody == null)
+        {
+            _marbleTransform = GetComponent<Transform>();
+            _marbleRigidbody = GetComponent<Rigidbody>();
+        }*/
+        
+        if (spawnPoint.transform != null)
         {
             _marbleTransform.position = spawnPoint.transform.position;
             _marbleTransform.rotation = spawnPoint.transform.rotation;

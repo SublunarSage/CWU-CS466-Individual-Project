@@ -46,12 +46,12 @@ public class ScoreManager : MonoBehaviour
     
     private void OnEnable()
     {
-        ScoreMessenger.OnMeshTriggered += HandleMeshTriggered;
+        MeshTrigger.OnMeshTriggered += HandleMeshTriggered;
     }
 
     private void OnDisable()
     {
-        ScoreMessenger.OnMeshTriggered -= HandleMeshTriggered;
+        MeshTrigger.OnMeshTriggered -= HandleMeshTriggered;
     }
 
     private void Start()

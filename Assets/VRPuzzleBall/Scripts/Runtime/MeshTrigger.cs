@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreMessenger : MonoBehaviour
+public class MeshTrigger : MonoBehaviour
 {
 
     public int PointsToGrant = 0;
@@ -14,7 +14,7 @@ public class ScoreMessenger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            object eventData = new { Points = PointsToGrant };
+            object eventData = new { Points = PointsToGrant, TriggeredBy = gameObject };
             
             OnMeshTriggered?.Invoke(new MeshTriggerEvent<object>(MeshMessage.PlayerCollision, eventData));
         }
