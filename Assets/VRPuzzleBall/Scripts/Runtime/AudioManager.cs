@@ -20,7 +20,23 @@ public class AudioManager : MonoBehaviour
     {
         currentClip = clip;
     }
-    
+
+    public void ToggleMuteAudio(bool isMuted)
+    {
+        AudioListener.volume = isMuted ? 0 : 1;
+        PlayerPrefs.SetInt("MuteAudio", isMuted ? 1 : 0);
+    }
+
+    private void OnEnable()
+    {
+        UIManager.OnToggleMuteAudio += ToggleMuteAudio;
+    }
+
+    private void OnDisable()
+    {
+        UIManager.OnToggleMuteAudio -= ToggleMuteAudio;
+    }
+
     private void Awake()
     {
         if (_instance == null)
@@ -36,6 +52,10 @@ public class AudioManager : MonoBehaviour
         // Add an initial delay so speaker/eardrums won't get shocked
         _goalTime = AudioSettings.dspTime + 1;
         PlayScheduledClip();
+        
+        // Load Mute state
+        bool isMuted = PlayerPrefs.GetInt("MuteAudio", 0) == 1;
+        AudioListener.volume = isMuted ? 0 : 1;
     }
 
     private void Update()
@@ -54,5 +74,6 @@ public class AudioManager : MonoBehaviour
         _musicDuration = (double) currentClip.samples / currentClip.frequency;
         _goalTime = _goalTime + _musicDuration;
     }
+    
 
 }

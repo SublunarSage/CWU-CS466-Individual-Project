@@ -9,30 +9,29 @@ public enum GameStateEvent
 {
     None,
     Restart,
-    Quit
+    Quit,
+    OpenMenu,
+    CloseMenu
 }
 
 public class GameManager : MonoBehaviour
 {
-
-    [SerializeField] private ScoreManager _scoreManager;
-
+    
     private void OnEnable()
     {
-        PuzzleBoardController.OnGameStateEventSent += HandleGameStateMessage;
+        UIButtonEvent.OnButtonEventTriggered += HandleButtonEvent;
     }
 
     private void OnDisable()
     {
-        PuzzleBoardController.OnGameStateEventSent -= HandleGameStateMessage;
+        UIButtonEvent.OnButtonEventTriggered -= HandleButtonEvent;
     }
+    
 
-    private void HandleGameStateMessage(GameStateEvent message)
+    private void HandleButtonEvent(object sender, UIButtonEventArgs args)
     {
-        switch (message)
+        switch (args.GameStateEvent)
         {
-            case GameStateEvent.None:
-                break;
             case GameStateEvent.Restart:
                 Restart();
                 break;

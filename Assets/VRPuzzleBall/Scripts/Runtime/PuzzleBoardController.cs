@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 using Google.XR.Cardboard;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 namespace VRPuzzleBall.Scripts.Runtime
@@ -20,10 +21,10 @@ namespace VRPuzzleBall.Scripts.Runtime
         [SerializeField] private double rotationSpeed = 0.15;
         [SerializeField] private InputActionAsset inputActions;
         [SerializeField] private float gyroSensitivity;
-
+        
         private InputAction mobileGyro;
         private InputAction mobileAttitude;
-        private InputAction touchPosition;
+        private InputAction tapPosition;
         
         private Quaternion initialRotation;
         private Quaternion gyroRotation;
@@ -34,11 +35,11 @@ namespace VRPuzzleBall.Scripts.Runtime
         private void Awake()
         {
             mobileGyro = inputActions.FindActionMap("Gameplay").FindAction("Gyro", true);
-            inputActions.FindActionMap("Gameplay").FindAction("TouchScreenTap").performed += OnTouchscreenTapped;
-            inputActions.FindActionMap("Gameplay").FindAction("TouchScreenTap").canceled += OnTouchscreenTapped;
+            inputActions.FindActionMap("Gameplay").FindAction("PrimaryTap").performed += OnTouchscreenTapped;
+            inputActions.FindActionMap("Gameplay").FindAction("PrimaryTap").canceled += OnTouchscreenTapped;
             mobileAttitude = inputActions.FindActionMap("Gameplay").FindAction("Att", true);
-            touchPosition = inputActions.FindActionMap("Gameplay").FindAction("TouchPosition");
-
+            tapPosition = inputActions.FindActionMap("Gameplay").FindAction("TapPosition");
+            
 
         }
 
@@ -58,6 +59,7 @@ namespace VRPuzzleBall.Scripts.Runtime
             UpdateGyro();
             
         }
+        
 
         private void FixedUpdate()
         {
@@ -89,7 +91,7 @@ namespace VRPuzzleBall.Scripts.Runtime
         private void OnTouchscreenTapped(InputAction.CallbackContext context)
         {
 
-            Vector2 touchPositionValue = touchPosition.ReadValue<Vector2>();
+            Vector2 touchPositionValue = tapPosition.ReadValue<Vector2>();
             
             if (context.performed)
             {
@@ -99,13 +101,14 @@ namespace VRPuzzleBall.Scripts.Runtime
                 Ray ray = Camera.main.ScreenPointToRay(touchPositionValue);
                 RaycastHit hit;
                 
-                Debug.Log(touchPosition.ReadValue<Vector2>());
                 if (Physics.Raycast(ray, out hit))
                 {
                     
                 }
                 
                 // Check if the touch position is over a UI element
+                // Code should no longer be needed thanks to button handlers
+                /*
                 PointerEventData pointerData = new PointerEventData(EventSystem.current)
                 {
                     position = touchPositionValue
@@ -123,7 +126,12 @@ namespace VRPuzzleBall.Scripts.Runtime
                     {
                         OnGameStateEventSent?.Invoke(GameStateEvent.Quit);
                     }
+                    else if (result.gameObject.name == "SettingsButton")
+                    {
+                        OnGameStateEventSent?.Invoke(GameStateEvent.OpenSettings);
+                    }
                 }
+                */
 
 
             }
@@ -142,7 +150,12 @@ namespace VRPuzzleBall.Scripts.Runtime
         {
             inputActions.FindActionMap("Gameplay").Disable();
         }
-        
+
+        private void OnDestroy()
+        {
+            //settingsButton.onClick.RemoveListener(Test);
+        }
+
         private static void EnableDeviceIfNeeded(InputDevice device)
         {
             if (device != null && !device.enabled) InputSystem.EnableDevice(device);
